@@ -1,0 +1,254 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="FN15_Debug|Win32">
+      <Configuration>FN15_Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="FN15_Release|Win32">
+      <Configuration>FN15_Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="FX15_Debug|Win32">
+      <Configuration>FX15_Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="FX15_Release|Win32">
+      <Configuration>FX15_Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="DZ10_Debug|Win32">
+      <Configuration>DZ10_Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="DZ10_Release|Win32">
+      <Configuration>DZ10_Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\App\flashload.c" />
+    <ClCompile Include="..\App\main.c">
+    </ClCompile>
+    <ClCompile Include="..\App\MK60_conf.c">
+    </ClCompile>
+    <ClCompile Include="..\App\MK60_it.c">
+    </ClCompile>
+    <ClCompile Include="..\App\motor_control.c" />
+    <ClCompile Include="..\App\parameter.c" />
+    <ClCompile Include="..\App\sensor.c" />
+    <ClCompile Include="..\App\TASK_process.c" />
+    <ClCompile Include="..\Board\src\IO_I2C.c" />
+    <ClCompile Include="..\Board\src\MMA8451.c" />
+    <ClCompile Include="..\Board\src\MPU3050.c" />
+    <ClCompile Include="..\Board\src\MPU6050.c" />
+    <ClCompile Include="..\Board\src\OLED.c" />
+    <ClCompile Include="..\Board\src\sdcard.c" />
+    <ClCompile Include="..\Board\src\VCAN_camera.c" />
+    <ClCompile Include="..\Board\src\VCAN_computer.c">
+    </ClCompile>
+    <ClCompile Include="..\Board\src\VCAN_key.c">
+    </ClCompile>
+    <ClCompile Include="..\Board\src\VCAN_OV7725_Eagle.c" />
+    <ClCompile Include="..\Board\src\VCAN_OV7725_Wolf.c" />
+    <ClCompile Include="..\Board\src\VCAN_SCCB.c" />
+    <ClCompile Include="..\Chip\src\misc.c">
+    </ClCompile>
+    <ClCompile Include="..\Chip\src\MK60_DWT.c">
+    </ClCompile>
+    <ClCompile Include="..\Chip\src\MK60_flash.c">
+    </ClCompile>
+    <ClCompile Include="..\Chip\src\MK60_ftm.c" />
+    <ClCompile Include="..\Chip\src\MK60_gpio.c">
+    </ClCompile>
+    <ClCompile Include="..\Chip\src\MK60_lptmr.c">
+    </ClCompile>
+    <ClCompile Include="..\Chip\src\MK60_mcg.c">
+    </ClCompile>
+    <ClCompile Include="..\Chip\src\MK60_PIT.c">
+    </ClCompile>
+    <ClCompile Include="..\Chip\src\MK60_port.c">
+    </ClCompile>
+    <ClCompile Include="..\Chip\src\MK60_SysTick.c">
+    </ClCompile>
+    <ClCompile Include="..\Chip\src\MK60_uart.c">
+    </ClCompile>
+    <ClCompile Include="..\Chip\src\MK60_wdog.c">
+    </ClCompile>
+    <ClCompile Include="..\Chip\src\IAR\system_MK60DZ10.c">
+    </ClCompile>
+    <ClCompile Include="..\Chip\src\vectors.c">
+    </ClCompile>
+    <ClCompile Include="..\SOLGUI\Font\Font4x6_ASCII.c" />
+    <ClCompile Include="..\SOLGUI\Font\Font6x8_ASCII.c" />
+    <ClCompile Include="..\SOLGUI\Font\Font8x10_ASCII.c" />
+    <ClCompile Include="..\SOLGUI\Font\Font8x8_ASCII.c" />
+    <ClCompile Include="..\SOLGUI\SOLGUI_Common.c" />
+    <ClCompile Include="..\SOLGUI\SOLGUI_GBasic.c" />
+    <ClCompile Include="..\SOLGUI\SOLGUI_Hardware.c" />
+    <ClCompile Include="..\SOLGUI\SOLGUI_Menu.c" />
+    <ClCompile Include="..\SOLGUI\SOLGUI_Picture.c" />
+    <ClCompile Include="..\SOLGUI\SOLGUI_Printf.c" />
+    <ClCompile Include="..\SOLGUI\SOLGUI_Widget.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\App\Inc\MK60_conf.h">
+    </ClInclude>
+    <ClInclude Include="..\App\Inc\MK60_it.h">
+    </ClInclude>
+    <ClInclude Include="..\App\Inc\motor_control.h" />
+    <ClInclude Include="..\App\Inc\parameter.h" />
+    <ClInclude Include="..\App\Inc\PORT_cfg.h">
+    </ClInclude>
+    <ClInclude Include="..\App\Inc\sensor.h" />
+    <ClInclude Include="..\App\Inc\TASK_process.h" />
+    <ClInclude Include="..\Chip\inc\common.h">
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Board\src\VCAN_LED.C">
+    </None>
+    <None Include="..\Chip\src\IAR\startup_MK60DZ10.s">
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="log.txt" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{AA91B061-00F1-401F-707B-FDB83FC908D9}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>vcan_Kinetis</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='FN15_Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>..\App;..\App\Inc;..\Board\Inc;..\Chip\inc;..\Chip\inc\IAR;..\Chip\inc\kinetis;..\Lib\CMSIS\Inc;..\Lib\FatFs;..\Lib\USB</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='FN15_Release|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>..\App;..\App\Inc;..\Board\Inc;..\Chip\inc;..\Chip\inc\IAR;..\Chip\inc\kinetis;..\Lib\CMSIS\Inc;..\Lib\FatFs;..\Lib\USB</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='FX15_Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>..\App;..\App\Inc;..\Board\Inc;..\Chip\inc;..\Chip\inc\IAR;..\Chip\inc\kinetis;..\Lib\CMSIS\Inc;..\Lib\FatFs;..\Lib\USB</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='FX15_Release|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>..\App;..\App\Inc;..\Board\Inc;..\Chip\inc;..\Chip\inc\IAR;..\Chip\inc\kinetis;..\Lib\CMSIS\Inc;..\Lib\FatFs;..\Lib\USB</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DZ10_Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>..\App;..\App\Inc;..\Board\Inc;..\Chip\inc;..\Chip\inc\IAR;..\Chip\inc\kinetis;..\Lib\CMSIS\Inc;..\Lib\FatFs;..\Lib\USB</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DZ10_Release|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>..\App;..\App\Inc;..\Board\Inc;..\Chip\inc;..\Chip\inc\IAR;..\Chip\inc\kinetis;..\Lib\CMSIS\Inc;..\Lib\FatFs;..\Lib\USB</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='FN15_Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>DEBUG;ARM_MATH_CM4;MK60F15;MK60FN15</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>
+      </SubSystem>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='FN15_Release|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>NDEBUG;ARM_MATH_CM4;MK60F15;MK60FN15</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>
+      </SubSystem>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='FX15_Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>DEBUG;ARM_MATH_CM4;MK60F15;MK60FX15</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>
+      </SubSystem>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='FX15_Release|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>NDEBUG;ARM_MATH_CM4;MK60F15;MK60FX15</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>
+      </SubSystem>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DZ10_Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>DEBUG;ARM_MATH_CM4;MK60DZ10</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>
+      </SubSystem>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DZ10_Release|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>NDEBUG;ARM_MATH_CM4;MK60DZ10</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>
+      </SubSystem>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props">
+  </Import>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='FN15_Release|Win32'">
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='DZ10_Release|Win32'">
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='DZ10_Debug|Win32'">
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='FX15_Release|Win32'">
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='FX15_Debug|Win32'">
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='FN15_Debug|Win32'">
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props">
+  </Import>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets">
+  </Import>
+</Project>

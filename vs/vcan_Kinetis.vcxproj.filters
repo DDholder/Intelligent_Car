@@ -1,0 +1,202 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件\App">
+      <UniqueIdentifier>{fcb80fcc-327f-4ae7-6a38-3839adf064bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Board">
+      <UniqueIdentifier>{22838404-d714-47e1-7474-1470897f7a06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Chip">
+      <UniqueIdentifier>{311388f3-ca3a-4d45-5c6a-f57d1ba2f336}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\LIB">
+      <UniqueIdentifier>{e76d9aba-01c0-4394-6ca7-11e3a5874cdb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\LIB\CMSIS">
+      <UniqueIdentifier>{06921b66-445c-4c6d-6373-f859cfc841af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{d231606f-bac5-428c-58a4-181274d11a26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\SOLGUI">
+      <UniqueIdentifier>{f16583cc-5109-40eb-a1ec-c7177ec105b0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\App\main.c">
+      <Filter>源文件\App</Filter>
+    </ClCompile>
+    <ClCompile Include="..\App\MK60_conf.c">
+      <Filter>源文件\App</Filter>
+    </ClCompile>
+    <ClCompile Include="..\App\MK60_it.c">
+      <Filter>源文件\App</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Board\src\VCAN_computer.c">
+      <Filter>源文件\Board</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Board\src\VCAN_key.c">
+      <Filter>源文件\Board</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Chip\src\misc.c">
+      <Filter>源文件\Chip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Chip\src\MK60_DWT.c">
+      <Filter>源文件\Chip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Chip\src\MK60_flash.c">
+      <Filter>源文件\Chip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Chip\src\MK60_gpio.c">
+      <Filter>源文件\Chip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Chip\src\MK60_lptmr.c">
+      <Filter>源文件\Chip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Chip\src\MK60_mcg.c">
+      <Filter>源文件\Chip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Chip\src\MK60_PIT.c">
+      <Filter>源文件\Chip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Chip\src\MK60_port.c">
+      <Filter>源文件\Chip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Chip\src\MK60_SysTick.c">
+      <Filter>源文件\Chip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Chip\src\MK60_uart.c">
+      <Filter>源文件\Chip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Chip\src\MK60_wdog.c">
+      <Filter>源文件\Chip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Chip\src\IAR\system_MK60DZ10.c">
+      <Filter>源文件\Chip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Chip\src\vectors.c">
+      <Filter>源文件\Chip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Board\src\OLED.c">
+      <Filter>源文件\Board</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SOLGUI\SOLGUI_Common.c">
+      <Filter>源文件\SOLGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SOLGUI\SOLGUI_GBasic.c">
+      <Filter>源文件\SOLGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SOLGUI\SOLGUI_Hardware.c">
+      <Filter>源文件\SOLGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SOLGUI\SOLGUI_Menu.c">
+      <Filter>源文件\SOLGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SOLGUI\SOLGUI_Picture.c">
+      <Filter>源文件\SOLGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SOLGUI\SOLGUI_Printf.c">
+      <Filter>源文件\SOLGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SOLGUI\SOLGUI_Widget.c">
+      <Filter>源文件\SOLGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SOLGUI\Font\Font4x6_ASCII.c">
+      <Filter>源文件\SOLGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SOLGUI\Font\Font6x8_ASCII.c">
+      <Filter>源文件\SOLGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SOLGUI\Font\Font8x8_ASCII.c">
+      <Filter>源文件\SOLGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SOLGUI\Font\Font8x10_ASCII.c">
+      <Filter>源文件\SOLGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Chip\src\MK60_ftm.c">
+      <Filter>源文件\Chip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Board\src\VCAN_camera.c">
+      <Filter>源文件\Board</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Board\src\VCAN_OV7725_Eagle.c">
+      <Filter>源文件\Board</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Board\src\VCAN_OV7725_Wolf.c">
+      <Filter>源文件\Board</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Board\src\VCAN_SCCB.c">
+      <Filter>源文件\Board</Filter>
+    </ClCompile>
+    <ClCompile Include="..\App\motor_control.c">
+      <Filter>源文件\App</Filter>
+    </ClCompile>
+    <ClCompile Include="..\App\sensor.c">
+      <Filter>源文件\App</Filter>
+    </ClCompile>
+    <ClCompile Include="..\App\parameter.c">
+      <Filter>源文件\App</Filter>
+    </ClCompile>
+    <ClCompile Include="..\App\TASK_process.c">
+      <Filter>源文件\App</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Board\src\MPU6050.c">
+      <Filter>源文件\Board</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Board\src\IO_I2C.c">
+      <Filter>源文件\Board</Filter>
+    </ClCompile>
+    <ClCompile Include="..\App\flashload.c">
+      <Filter>源文件\App</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Board\src\MMA8451.c">
+      <Filter>源文件\Board</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Board\src\MPU3050.c">
+      <Filter>源文件\Board</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Board\src\sdcard.c">
+      <Filter>源文件\Board</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\App\Inc\MK60_conf.h">
+      <Filter>源文件\App</Filter>
+    </ClInclude>
+    <ClInclude Include="..\App\Inc\MK60_it.h">
+      <Filter>源文件\App</Filter>
+    </ClInclude>
+    <ClInclude Include="..\App\Inc\PORT_cfg.h">
+      <Filter>源文件\App</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Chip\inc\common.h">
+      <Filter>源文件\Chip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\App\Inc\motor_control.h">
+      <Filter>源文件\App</Filter>
+    </ClInclude>
+    <ClInclude Include="..\App\Inc\sensor.h">
+      <Filter>源文件\App</Filter>
+    </ClInclude>
+    <ClInclude Include="..\App\Inc\parameter.h">
+      <Filter>源文件\App</Filter>
+    </ClInclude>
+    <ClInclude Include="..\App\Inc\TASK_process.h">
+      <Filter>源文件\App</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Board\src\VCAN_LED.C">
+      <Filter>源文件\Board</Filter>
+    </None>
+    <None Include="..\Chip\src\IAR\startup_MK60DZ10.s">
+      <Filter>源文件\Chip</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="log.txt">
+      <Filter>源文件</Filter>
+    </Text>
+  </ItemGroup>
+</Project>
