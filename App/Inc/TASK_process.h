@@ -25,13 +25,13 @@ extern float DIRECTION_CONTROL_D ;
 extern float LeftMotorOut ;          //电机左右输出变量
 extern float RightMotorOut ;
 extern float  String_Angle_P ;              // 串级角度
-extern float  D_String_Angle_P ;            // 直立参数跟随角度
 extern float  String_Angle_I ;
 extern float  String_Angle_D ;
 extern float  String_Gyro_P ;                //串级角速度      
 extern float  String_Gyro_I ;            //0.001
 extern float  String_Gyro_D ;                 //2
-extern float  CarAngle_Set;
+
+extern float  CarAngle_Set;           //角度设置
 extern float  AngleControlOut;
 extern float  SpeedControlOut;
 extern void  Car_Control_Process(void);

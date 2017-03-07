@@ -5847,6 +5847,9 @@
       <name>$PROJ_DIR$\..\..\App\motor_control.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\App\parameter.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\App\Inc\PORT_cfg.h</name>
     </file>
     <file>

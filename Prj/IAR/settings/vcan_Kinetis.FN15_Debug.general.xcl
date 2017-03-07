@@ -1,0 +1,15 @@
+"D:\IAR for ARM 7_7\arm\bin\armproc.dll" 
+
+"D:\IAR for ARM 7_7\arm\bin\armjlink2.dll" 
+
+"E:\_27_第十二届智能车\Intelligent_Car\Prj\IAR\FN15_Debug\Exe\vcan_Kinetis.out" 
+
+--plugin "D:\IAR for ARM 7_7\arm\bin\armbat.dll" 
+
+--device_macro "D:\IAR for ARM 7_7\arm\config\debugger\NXP\Kxx.dmac" 
+
+--flash_loader "D:\IAR for ARM 7_7\arm\config\flashloader\NXP\FlashK60Fxxx128K.board" 
+
+
+
+

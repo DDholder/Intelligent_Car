@@ -23,56 +23,83 @@ extern float  String_Gyro_D ;                 //2
 extern float  turn_power;
 extern float  Begin_CarSpeed; 
 extern float turn_offset;
+extern float A_out;
+extern float B_out;
+extern	int edge_offsetl, edge_offsetr;  //边界补偿    
+extern int lnum, rnum, mnum, x;                                                                                 //量
+extern	int edgel[60];  //左边界										      //
+extern	int edger[60];  //右边界
+extern int map[80][60];
+char pic_choose = 1;
 
-//extern float GYROSCOPE_ANGLE_RATIO;
-//-----------------清华滤波方案------------------
-//extern float DT;               //清华滤波时间常数
-//重力加速角度补偿时间常数 
-//extern float g_fGRAVITY_ADJUST_TIME_CONSTANT;
-
-//extern float  String_Angle_P ;              // 串级角度
-//extern float  D_String_Angle_P ;            // 直立参数跟随角度
-//extern float  String_Angle_I ;
-//extern float  String_Angle_D ;
-//extern float  String_Gyro_P ;                //串级角速度      
-//extern float  String_Gyro_I ;            //0.001
-//extern float  String_Gyro_D ;                 //2
-////extern float CarAngle_offset;
-//extern float  Begin_CarSpeed;
-//extern float  CarSpeed; 
-//extern int16 LeftMotorPulseSigma;          //左边电机计数信号
-//extern int16 RightMotorPulseSigma;         //右边电机计数信号
-//extern float  SPEED_CONTROL_P; 
-//extern float  SpeedControlOutNew;
-//extern float  Angle_fDelta;
-//extern float derec_p;
-//extern float derec_delta;
-//
-//extern int   line_left ;
-//extern int   line_right;
-//extern float derec_d;
+extern float k1 ;
+extern float k2 ;
 #if MENU_FRAME_EN==1
-
+void drawedge(int left[], int right[], int up, int down)
+{
+	int l = 0, r = 0;
+	for (int i = up;i < down;i++)
+	{
+		SOLGUI_DrawPoint(left[i], 60 - i, 1);
+		SOLGUI_DrawPoint(right[i], 60 - i, 1);
+	}
+}
+void lookmap(int map[][60])
+{
+	for (int i = 0;i < 80;i++)
+	{
+		for (int j = 0;j < 60;j++)
+		{
+			if (!map[i][60 - j])
+				SOLGUI_DrawPoint(i, j, 1);
+		}
+	}
+}
 
 void CarStand(void)
 {
   DELAY_MS(1000);
 //  CarStandStart_flag = 1;
 }
+void SaveParameter(void)
+{
+	my_cnf[0].f = Q_angle;
+	my_cnf[1].f =  Q_gyro;
+	my_cnf[2].f =  R_angle;
+	my_cnf[3].f =  dt;           //滤波参数
+	my_cnf[4].f = CarAngle_Set;
+	my_cnf[5].f = String_Angle_P;
+	my_cnf[6].f = String_Angle_I;
+	my_cnf[7].f = String_Angle_D;
+	my_cnf[8].f = String_Gyro_P;
+    my_cnf[9].f = String_Gyro_I;
+	my_cnf[10].f = String_Gyro_D;
+	my_cnf[11].f = SPEED_CONTROL_P;
+	my_cnf[12].f = SPEED_CONTROL_I;
+	my_cnf[13].f = SPEED_CONTROL_D;
+	my_cnf[14].f = DIRECTION_CONTROL_P;
+	my_cnf[15].f = DIRECTION_CONTROL_D;
+	my_cnf[16].f = Begin_CarSpeed;
+	Write_config();
+	SOLGUI_Widget_OptionText(3, "SAVE OK!");
+	DELAY_MS(500);
+
+}
 
 //##############################【自定义页面】##############################
-MENU_PAGE UI_List;MENU_PAGE UI_Config;MENU_PAGE UI_Dataview;MENU_PAGE UI_Debug;                    
-__M_PAGE(UI_List,"List",PAGE_NULL,
+MENU_PAGE UI_List;MENU_PAGE UI_image_show;MENU_PAGE UI_Dataview;MENU_PAGE UI_Debug;                    
+__M_PAGE(UI_List,"CAUC",PAGE_NULL,
 {
   	SOLGUI_Cursor(6,0,14);
-	SOLGUI_Widget_GotoPage(0,&UI_Config);	
-        SOLGUI_Widget_GotoPage(1,&UI_Dataview);	
-       SOLGUI_Widget_GotoPage(2,&UI_Debug);	
-//        SOLGUI_Widget_Button(3,"RUN",CarStand);
-	SOLGUI_Widget_OptionText(3, "angle:  %f", CarAngle);
-	SOLGUI_Widget_OptionText(4, "speed:  %f", CarSpeed);
-	SOLGUI_Widget_Spin(5, "SP_SET", FLT16, -8000, 8000, &Begin_CarSpeed);
-	SOLGUI_Widget_Spin(6, "OFFSET", FLT16, -8000, 8000, &turn_offset);
+	SOLGUI_Widget_GotoPage(0,&UI_image_show);
+    SOLGUI_Widget_GotoPage(1,&UI_Dataview);	
+    SOLGUI_Widget_GotoPage(2,&UI_Debug);	
+    SOLGUI_Widget_Button(3,"SavePara", SaveParameter);    //保存参数
+	SOLGUI_Widget_OptionText(4, "angle:  %f", CarAngle);
+	SOLGUI_Widget_OptionText(5, "speed:  %f", CarSpeed);
+	SOLGUI_Widget_Spin(6, "SP_SET", FLT16, -8000, 8000, &Begin_CarSpeed);
+	SOLGUI_Widget_Spin(7, "OFFSET", FLT16, -8000, 8000, &turn_offset);
+	SOLGUI_Widget_Spin(8, "PIC", INT8, 0, 1, &pic_choose);
 //    SOLGUI_Widget_OptionText(4,"ANGLE:  %f", CarAngle);
 //	SOLGUI_Widget_OptionText(5, "SP:  %f", CarSpeed);
 //	SOLGUI_Widget_OptionText(6, "YY:  %d", Gyro_L3G4200_Y);
@@ -91,13 +118,31 @@ __M_PAGE(UI_List,"List",PAGE_NULL,
 
 //-----------------------
 
-__M_PAGE(UI_Config,"Config",&UI_List,
+__M_PAGE(UI_image_show,"Image",&UI_List,
 {
-  	//SOLGUI_Cursor(6,0,5);
+	//SOLGUI_Cursor(6,0,5);
 
-	SOLGUI_Widget_Picture(47,0,80,60,imgbuff,80,60,NML);
-    SOLGUI_Widget_OptionText(2, "%f", CarAngle);
-    SOLGUI_Widget_OptionText(3,"%f", turn_power);
+	//SOLGUI_Widget_Picture(47,0,80,60,imgbuff,80,60,NML);
+	//SOLGUI_Widget_OptionText(2, "%f", CarAngle);
+	SOLGUI_Widget_OptionText(1, "             %f", B_out);
+//SOLGUI_Widget_OptionText(2, "             %f", 1000.0 / A_out);
+if (A_out == 0)
+{
+	SOLGUI_Widget_OptionText(3, "             0");
+}
+else {
+	SOLGUI_Widget_OptionText(3, "             %f", A_out ); }
+	SOLGUI_Widget_OptionText(4, "             %f", turn_power);
+	SOLGUI_Widget_OptionText(5, "             %d", lnum);
+	SOLGUI_Widget_OptionText(6, "             %d", rnum);
+	if (pic_choose == 1)
+	{
+		drawedge(edgel, edger, 20, 60);
+	}
+	else
+	{
+		lookmap(map);
+	}
         //SOLGUI_Widget_Bar(100,0,6,56,80,0, 39+derec_delta,DIREC_Y|PROGBAR);
 //        SOLGUI_Widget_Spin(1,"Angle_pid_ki",FLT16,0,20,&Angle_pid_ki);
 //        SOLGUI_Widget_Spin(2,"Angle_pid_kd",FLT16,0,5,&Angle_pid_kd);	
@@ -141,10 +186,10 @@ __M_PAGE(UI_Dataview,"Dataview",&UI_List,
 __M_PAGE(UI_Debug,"Debug",&UI_List,
 {
   	SOLGUI_Cursor(6,0,15);
-	SOLGUI_Widget_Spin(0,"Q_angle",FLT16,-2000,2000,&Q_angle);	
-        SOLGUI_Widget_Spin(1,"Q_gyro",FLT16,-2000,2000,&Q_gyro);
-        SOLGUI_Widget_Spin(2,"R_angle",FLT16,-2000,2000,&R_angle);	
-        SOLGUI_Widget_Spin(3,"ag",FLT16,-20000,20000,&CarAngle_Set);
+SOLGUI_Widget_Spin(11, "Q_angle", FLT16, -2000, 2000, &Q_angle);
+SOLGUI_Widget_Spin(12, "Q_gyro", FLT16, -2000, 2000, &Q_gyro);
+SOLGUI_Widget_Spin(13, "R_angle", FLT16, -2000, 2000, &R_angle);
+SOLGUI_Widget_Spin(14, "ag", FLT16, -20000, 20000, &CarAngle_Set);
 		SOLGUI_Widget_Spin(4, "SAP", FLT16,-2000, 2000, &String_Angle_P);
 		SOLGUI_Widget_Spin(5, "SAD", FLT16, -2000, 2000, &String_Angle_D);
 		SOLGUI_Widget_Spin(6, "SGP", FLT16, -2000, 20000, &String_Gyro_P);
@@ -152,8 +197,10 @@ __M_PAGE(UI_Debug,"Debug",&UI_List,
 		SOLGUI_Widget_Spin(8, "SPP", FLT16, -2000, 2000, &SPEED_CONTROL_P);
 		SOLGUI_Widget_Spin(9, "SPI", FLT16, -2000, 2000, &SPEED_CONTROL_I);
 		SOLGUI_Widget_Spin(10, "SPD", FLT16, -2000, 2000, &SPEED_CONTROL_D);
-		SOLGUI_Widget_Spin(11, "DIRP", FLT16, -2000, 2000, &DIRECTION_CONTROL_P);
-		SOLGUI_Widget_Spin(12, "DIRD", FLT16, -2000, 2000, &DIRECTION_CONTROL_D);
+		SOLGUI_Widget_Spin(0, "DIRP", FLT16, -2000, 2000, &DIRECTION_CONTROL_P);
+		SOLGUI_Widget_Spin(1, "DIRD", FLT16, -2000, 2000, &DIRECTION_CONTROL_D);
+		SOLGUI_Widget_Spin(2, "k1", FLT16, -2000, 2000, &k1);
+		SOLGUI_Widget_Spin(3, "k2", FLT16, -2000, 2000, &k2);
 		//SOLGUI_Widget_Spin(8, "GRA", FLT16, 0, 200, &g_fGRAVITY_ADJUST_TIME_CONSTANT);
 		//SOLGUI_Widget_Spin(9, "Gy_ratio", FLT16, 0, 200, &Gypo_ratio);
 //        SOLGUI_Widget_Spin(7,"Speed_kp",FLT16,-300,20,&Speed_pid_kp);	

@@ -20,6 +20,10 @@ extern float point_center;						 //偏差
 extern float Kalman_Filter(float angle_m, float gyro_m);
 extern Sensor_Type Sensor_Value;                     //传感器值
 extern Sensor_Type Sensor_Offset;                    //传感器偏移值  
+extern float Q_angle; 
+extern float Q_gyro;
+extern float R_angle; 
+extern float dt ;
 #endif
 #ifdef L3G4200_USED
 extern float CarAngle;            //车模倾角

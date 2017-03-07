@@ -27,6 +27,9 @@ void PIT1_IRQHandler(void);
 void PORTA_IRQHandler(void);
 void DMA0_IRQHandler(void);
 void image_handler();
+void changemap();
+void weight_init();
+void LineFitting(int upedge);
 //====================参数定义========================
 //中断引用变量记得加volatile
 //只读变量记得加constant 
@@ -41,9 +44,21 @@ KEY_MSG_t keymsg;
 float power = 10, index = 0, turn_power = 0;//0:位置，1：曲率；
 int midx[60];
 int map[80][60];
+float weight[60];
 int midtempx = 0, n = 1, midn = 0;
 float turnangleindex = 0;
 float turn_offset = 0;
+float xl[60];
+int size = 60;
+float A, B;
+float yl[60];
+int midx_aftercalc[64];
+float edge_offsetl = 0, edge_offsetr = 0;  //边界补偿   
+int lnum = 0, rnum = 0, mnum = 0, x = 0;
+int edgel[60];  //左边界										      //
+int edger[60];  //右边界                                                                               //量
+float A_out, B_out;
+float k1 = 0, k2 = 0;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++
  /*!
   *  @brief      main函数
@@ -63,14 +78,13 @@ void main()
 	*枚举类型KEY_e 
 	*/
 	printf("Key Init......");
-        key_init(KEY_MAX);      //初始化全部按键
+    key_init(KEY_MAX);      //初始化全部按键
+	gpio_init(PTE9, GPI, 1);
 	DELAY_MS(5);
 	printf("OK\n");
 	/*        蜂鸣器初始化         */
 	printf("Beep Init......");
 	gpio_init(PTA16, GPO, 0);
-
-
 	printf("OK\n");
 	/*        OLED初始化          */ 
 	printf("OLED Init......");
@@ -98,18 +112,12 @@ void main()
 	/*		软件I2C初始化      */
 	printf("I2C Init......");
     IMU_IIC_Init();
-//	IIC_Init();
-//  load_config();
-//  gpio_init(PTC18, GPI, 0); //IMU INT
 	DELAY_MS(5);
 	printf("OK\n");
 	/*		姿态传感器初始化      */
 	printf("8451&3050 Init......");
     MPU3050_Init();                 //陀螺仪初始化     
     MMA8451_Init();	           // 加速度计初始化 
-//	MPU6050_initialize();
-//  MPU6050_InitGyro_Offset();
-	//Balance_Sensor_Init();
 	printf("OK\n");
 	/*       正交解码初始化      */
 	printf("Encoder Init......");
@@ -123,10 +131,8 @@ void main()
 	/*       FLASH初始化         */
 	printf("Flash Init......");
 	flash_init();             //初始化flash
+	parameter_init();         //初始化参数  此处装载所有掉电不丢失参数  
 	printf("OK\n");
-	//flash_erase_sector(SECTOR_NUM);  //擦除扇区 写入前必须擦除
-	//flash_write(SECTOR_NUM, 0, 0x12345678)//写入数据到扇区，偏移地址为0，必须一次写入4字节
-	//data32 = flash_read(SECTOR_NUM, 0, uint32);    //读取4字节 
 	DELAY_MS(5);
     /*       SD卡初始化        */
     printf("SD card Init......");
@@ -159,19 +165,27 @@ void main()
 	printf("OK\n");
 	printf("**************************\n");
 	printf("Init...Over\n");
-	DELAY_MS(5);
-    
+	DELAY_MS(5);   
 	EnableInterrupts;         //开总中断
-	//my_cnf[0].f = -222.22;
-	//Write_config();
-	//load_config();
-	//printf("%d\n", ((int)(my_cnf[2].f * 100)));
 	while (1)
 	{	
         camera_get_img(); 
 		image_handler();
+		if (A_out == 0)
+		{
+			turn_power = 0;
+		}
+		else
+		{
+			turn_power = A_out*k1+B_out*k2;
+		}
+		//turn_power = 1000.0 / A_out;
 		SOLGUI_Menu_PageStage();   
 		SOLGUI_Refresh();          //OLED前台刷新
+		if(gpio_get(PTE9)==0){
+		OLED_Init();        //初始化OLED
+		OLED_Fill(0x00);    //黑屏
+		}
 		vcan_sendware((uint8_t *)vcan_send_buff, sizeof(vcan_send_buff));
 
 	}
@@ -261,83 +275,322 @@ void DMA0_IRQHandler()
 
 
 //======================================
-void image_handler()
+void changemap()
 {
-	int tempcolor = map[0][0];
-	int leftn = 0, rightn = 0;
-	int left = 0, left_last = 0, right = 0, right_last = 0;
-	int addedgel = 1, addedger = 1;
-	int x = 0;
-	int edgel[60];
-	int edger[60];
-	power = 0;
 	for (int i = 0; i < 60; i++)
 	{
-		edgel[i] = 0;
-		edger[i] = 79;
-		midx[i] = 40;
-	}
-	for (int i = 20; i < 60; i++)
-	{
-		tempcolor = map[0][i];
 		for (int j = 0; j < 10; j++)
 		{
 			for (int k = 0; k < 8; k++)
 			{
-				if ((imgbuff[i * 10 + j] & (1 << k)) == (1 << k))
+				if ((imgbuff[i * 10 + j] & (1 << k)) != 0)
 				{
-					map[j * 8 + k][i] = 1;
+					map[j * 8 + 7 - k][i] = 1;
 				}
 				else
 				{
-					map[j * 8 + k][i] = 0;
+					map[j * 8 + 7 - k][i] = 0;
 				}
-				if (tempcolor + map[j * 8 + k][i] == 1)
-				{
-					x = j * 8 + k;
-					if (tempcolor == 0)
-					{
-						edger[i] = x;
-						rightn++;
-						right_last = right;
-						if (right_last == 0) right_last = x;
-						right = x;
-					}
-					if (tempcolor == 1)
-					{
-						edgel[i] = x;
-						leftn++;
-						left_last = left;
-						if (left_last == 79) left_last = x;
-						left = x;
-					}
-				}
-				if (j * 8 + k < 80)
-					tempcolor = map[j * 8 + k][i];
 			}
-
 		}
-		//        if ((edgel[i - 2] != 1) && (map[0][ i] == 0))
-		//        {
-		//            edgel[i - 1] += (left - left_last) * addedgel;
-		//            addedgel++;
-		//            if (i == 59)
-		//                edgel[59] += (left - left_last) * addedgel;
-		//        }
-		//        if ((edger[i - 2] != 79) && (map[79][ i] == 0))
-		//        {
-		//            edger[i - 1] += (right - right_last) * addedger;
-		//            addedger++;
-		//            if (i == 59)
-		//            {
-		//                edger[59] += (right - right_last) * addedger;
-		//            }
-		//        }
 	}
-	for (int i = 20; i < 60; i++)
+}
+void image_handler()
+{
+	///////////////////////////////////////////////////////////////////////////
+	int offset = 0;                  //中线补偿                         调
+	int upedge = 20;                 //扫描上边界                       节
+	int downedge = 60;
+	int zoom = 20;                   //缩放倍数                         参
+	int microScanArea = 5;           //寻边范围                         数
+									 //////////////////////////////////////////////////////////////////////////
+	int tempcolor = map[40][59];                                                                                  //中  
+																												  //间
+	int midx[60];   //中线											      //
+					//变
+	int confirmright = 0, confirmleft = 0;  //边界确认                                                    //
+	lnum = 0, rnum = 0, mnum = 0, x = 0;                                                                                 //量
+																														 ////////////////////////////////////////////////////////////////////////////
+	changemap();          //解压图像
+	power = 0;
+	for (int i = 0;i < 60;i++)
+	{
+		edgel[i] = 0;
+		edger[i] = 79;
+	}
+	for (int i = downedge - 1; i > upedge && (!confirmright) || (!confirmleft); i--)
+	{
+		/////////////////////////////////////////////////////////////////////////
+		//***********************初次向右寻边*********************************//
+		////////////////////////////////////////////////////////////////////////
+		for (int j = 40; j < 80 && ((!confirmright) || (!confirmleft)); j++)    //初次向右寻边
+		{
+			if ((tempcolor + map[j][i] == 1) || map[79][i] == 0)
+			{
+				///////////////////////////////////////////////////////////////////////////////
+				/////////////////                      ////////////////////////////////////////
+				/////////////////        右边界        ////////////////////////////////////////
+				/////////////////                      ////////////////////////////////////////
+				///////////////////////////////////////////////////////////////////////////////
+				if (((tempcolor + map[j][i] == 1 && tempcolor == 0) || map[79][i] == 0) && (!confirmright)) //右边界
+				{
+					if (map[79][i] == 0)
+					{
+						x = 79;
+					}
+					else
+					{
+						x = j;
+					}
+					edger[i] = x;
+					for (int b = i + 1; b >= upedge; b--)  //附近寻边
+					{
+						if (b > downedge - 1) b = downedge - 1;
+						if (x > microScanArea - 1)             //防止溢出
+							tempcolor = map[x - microScanArea + 1][b];
+						else
+							tempcolor = map[0][b];
+						for (int a = -microScanArea; a < microScanArea + 1; a++)
+						{
+							if (x + a < 80 && x + a > 0)
+							{
+								if (tempcolor + map[x + a][b] == 1 || (x + a == 79 && map[79][b] == 0))
+								{
+									edger[b] = x + a;
+									x += a;
+									rnum++;
+									break;
+								}
+								tempcolor = map[x + a][b];
+							}
+							else if (x + a <= 0)
+								confirmright = 1;
+						}
+
+					}
+					confirmright = 1;
+				}
+				///////////////////////////////////////////////////////////////////////////////
+				/////////////////                      ////////////////////////////////////////
+				/////////////////        左边界        ////////////////////////////////////////
+				/////////////////                      ////////////////////////////////////////
+				///////////////////////////////////////////////////////////////////////////////
+				if ((tempcolor + map[j][i] == 1 && tempcolor == 1) && (!confirmleft)) //左边界
+				{
+					if (map[0][i] == 0)
+					{
+						x = 0;
+					}
+					else
+					{
+						x = j;
+					}
+					edgel[i] = x;
+					for (int b = i + 1; b >= upedge; b--)  //附近寻边
+					{
+						if (b > downedge - 1) b = downedge - 1;
+						if (x > microScanArea - 1)                    //防止溢出
+							tempcolor = map[x - microScanArea + 1][b];
+						else
+							tempcolor = map[0][b];
+						for (int a = -microScanArea; a < microScanArea + 1; a++)
+						{
+							if (x + a < 80 && x + a > 0)
+							{
+								if (tempcolor + map[x + a][b] == 1 || (x + a == 0 && map[0][b] == 0))
+								{
+									edgel[b] = x + a;
+									x += a;
+									lnum++;
+									break;
+								}
+								tempcolor = map[x + a][b];
+							}
+							else if (x + a >= 80)
+								confirmleft = 1;
+						}
+
+					}
+					confirmleft = 1;
+				}
+			}
+			tempcolor = map[j][i];
+		}
+		/////////////////////////////////////////////////////////////////////////
+		//***********************初次向左寻边*********************************//
+		////////////////////////////////////////////////////////////////////////
+		for (int j = 40; j >= 0 && ((!confirmright) || (!confirmleft)); j--)    //初次向右寻边
+		{
+			if ((tempcolor + map[j][i] == 1) || map[0][i] == 0)
+			{
+				///////////////////////////////////////////////////////////////////////////////
+				/////////////////                      ////////////////////////////////////////
+				/////////////////        右边界        ////////////////////////////////////////
+				/////////////////                      ////////////////////////////////////////
+				///////////////////////////////////////////////////////////////////////////////
+				if ((tempcolor + map[j][i] == 1 && tempcolor == 1) && (!confirmright)) //右边界
+				{
+					if (map[79][i] == 0)
+					{
+						x = 79;
+					}
+					else
+					{
+						x = j;
+					}
+					edger[i] = x;
+					for (int b = i + 1; b >= upedge; b--)  //附近寻边
+					{
+						if (b > downedge - 1) b = downedge - 1;                          //防止溢出
+						if (x > microScanArea - 1)
+							tempcolor = map[x - microScanArea + 1][b];
+						else
+							tempcolor = map[0][b];
+						for (int a = -microScanArea; a < microScanArea + 1; a++)
+						{
+							if (x + a < 80 && x + a > 0)
+							{
+								if (tempcolor + map[x + a][b] == 1 || (x + a == 79 && map[79][b] == 0))
+								{
+									edger[b] = x + a;
+									x += a;
+									rnum++;
+									break;
+								}
+								tempcolor = map[x + a][b];
+							}
+							else if (x + a <= 0)
+								confirmright = 1;
+						}
+
+					}
+					confirmright = 1;
+				}
+				///////////////////////////////////////////////////////////////////////////////
+				/////////////////                      ////////////////////////////////////////
+				/////////////////        左边界        ////////////////////////////////////////
+				/////////////////                      ////////////////////////////////////////
+				///////////////////////////////////////////////////////////////////////////////
+				if (((tempcolor + map[j][i] == 1 && tempcolor == 0) || map[0][i] == 0) && (!confirmleft)) //左边界
+				{
+					if (map[0][i] == 0)
+					{
+						x = 0;
+					}
+					else
+					{
+						x = j;
+					}
+					edgel[i] = x;
+					for (int b = i + 1; b >= upedge; b--)  //附近寻边
+					{
+						if (b > downedge - 1) b = downedge - 1;                               //防止溢出
+						if (x > microScanArea - 1)
+							tempcolor = map[x - microScanArea + 1][b];
+						else
+							tempcolor = map[0][b];
+						for (int a = -microScanArea; a < microScanArea + 1; a++)
+						{
+							if (x + a < 80 && x + a >= 0)
+							{
+								if (tempcolor + map[x + a][b] == 1 || (x + a == 0 && map[0][b] == 0))
+								{
+									edgel[b] = x + a;
+									x += a;
+									lnum++;
+									break;
+								}
+								tempcolor = map[x + a][b];
+							}
+							else if (x + a >= 80)
+								confirmleft = 1;
+						}
+
+					}
+					confirmleft = 1;
+				}
+			}
+			tempcolor = map[j][i];
+		}
+	}
+	power = 0;
+	for (int i = upedge; i < downedge; i++)
 	{
 		midx[i] = (edgel[i] + edger[i]) / 2;
-		power += midx[i] - 40;
+		power += (midx[i] - 40)*weight[i];               //权重相加
+		yl[i] = i;
+		xl[i] = midx[i];
 	}
-	turn_power = power / 40 - turn_offset;
+	//右边界补偿
+	edge_offsetr = (downedge - upedge - rnum) * edger[downedge - rnum] + 0.5*(downedge - upedge - rnum) * (downedge - upedge - rnum - 1) * (edger[downedge - rnum] - edger[downedge - rnum + 1]);
+	//左边界补偿
+	edge_offsetl = (downedge - upedge - lnum) * edgel[downedge - lnum] + 0.5*(downedge - upedge - lnum) * (downedge - upedge - lnum - 1) * (edgel[downedge - lnum] - edgel[downedge - lnum + 1]);
+	//缩放后补偿输出
+	edge_offsetr = 0;
+	edge_offsetl = 0;
+	if ((power + offset + (edge_offsetr + edge_offsetl)*0.5) / zoom <= 100 && (power + offset + (edge_offsetr + edge_offsetl)*0.5) / zoom > -100)
+		turn_power = (power + offset + (edge_offsetr + edge_offsetl)*0.5) / zoom;
+	if (lnum < rnum) mnum = lnum;
+	else mnum = rnum;
+	size = upedge + mnum;
+	LineFitting(upedge);
+	if (A == 0) {
+		;
+	}
+	else {
+		A_out = 1000 / A;
+		B_out = B / -A;
+	}
+}
+//////////////////////////////////////////////////////////////////////
+//////                  /////////////////////////
+//////*****权重设置*****////////////////////
+//////                 ///////////////////////
+//////////////////////////////////////////////////////////////////////
+void weight_init()
+{
+	for (int i = 0; i < 60; i++)
+	{
+		switch ((int)(i / 10))
+		{
+		case 0: weight[i] = 1; break;
+		case 1: weight[i] = 1.1; break;
+		case 2: weight[i] = 1.2; break;
+		case 3: weight[i] = 1.25; break;
+		case 4: weight[i] = 1.4; break;
+		case 5: weight[i] = 1.5; break;
+		default:
+			break;
+		}
+	}
+}
+void LineFitting(int upedge)
+{
+	float xmean = 0.0f;
+	float ymean = 0.0f;
+	for (int i = upedge; i < size; i++)
+	{
+		xmean += xl[60 - i + upedge - 1];
+		ymean += yl[60 - i + upedge - 1];
+	}
+	xmean /= (size - upedge);
+	ymean /= (size - upedge);
+
+	float sumx2 = 0.0f;
+	float sumxy = 0.0f;
+	for (int i = upedge; i < size; i++)
+	{
+		sumx2 += (xl[60 - i + upedge - 1] - xmean) * (xl[60 - i + upedge - 1] - xmean);
+		sumxy += (yl[60 - i + upedge - 1] - ymean) * (xl[60 - i + upedge - 1] - xmean);
+	}
+
+	if (sumx2 == 0)
+	{
+		;
+	}
+	else {
+		A = sumxy / sumx2;
+		B = ymean - A * xmean;
+	}
+
 }

@@ -6,17 +6,17 @@
 //	uint32 i;
 //};
 struct datamap Config;
-union cnf_union my_cnf[cnf_num];  
+union cnf_union my_cnf[cnf_num];   
 
 void load_config(void){
 
 	uint16 i;
 
-//	for(i=0 ; i< cnf_num;i++)
-//    {
-//          my_cnf[i].i = flash_read(PAGE_Config, i*32, uint32);
-//	}
-      my_cnf[2].i = flash_read(PAGE_Config, 0, uint32);
+	for (i = 0; i < cnf_num;i++)
+	{
+		my_cnf[i].i = flash_read(PAGE_Config, i * 32, uint32);
+	}
+    //  my_cnf[2].i = flash_read(PAGE_Config, 0, uint32);
 }
 
 //Write current configuration
